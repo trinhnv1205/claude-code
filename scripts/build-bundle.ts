@@ -99,11 +99,48 @@ const buildOptions: esbuild.BuildOptions = {
     'fsevents',
     'sharp',
     'image-processor-napi',
-    // Anthropic-internal packages (not published externally)
+    'audio-capture-napi',
+    'color-diff-napi',
+    'modifiers-napi',
+    'node-pty',
+    // Anthropic-internal packages
     '@anthropic-ai/sandbox-runtime',
     '@anthropic-ai/claude-agent-sdk',
-    // Anthropic-internal (@ant/) packages — gated behind USER_TYPE === 'ant'
+    '@anthropic-ai/bedrock-sdk',
+    '@anthropic-ai/foundry-sdk',
+    '@anthropic-ai/vertex-sdk',
+    '@anthropic-ai/mcpb',
     '@ant/*',
+    // AWS / Azure / Google SDKs (loaded dynamically)
+    '@aws-sdk/*',
+    '@smithy/*',
+    '@azure/*',
+    'google-auth-library',
+    // OpenTelemetry (loaded lazily)
+    '@opentelemetry/*',
+    // Runtime dependencies (resolve from node_modules at runtime)
+    'axios', 'chalk', 'execa', 'semver', 'zod', 'zod/*',
+    'lodash-es', 'lodash-es/*',
+    'react', 'react/*', 'react-reconciler', 'react-reconciler/*',
+    '@anthropic-ai/sdk',
+    '@modelcontextprotocol/sdk', '@modelcontextprotocol/sdk/*',
+    '@growthbook/growthbook',
+    '@commander-js/extra-typings',
+    'ws', 'yaml', 'diff', 'ignore', 'picomatch',
+    'fuse.js', 'highlight.js', 'marked',
+    'undici', 'auto-bind', 'p-map', 'wrap-ansi', 'strip-ansi',
+    'code-excerpt', 'cli-boxes', 'figures', 'supports-hyperlinks',
+    'chokidar', 'proper-lockfile', 'tree-kill', 'qrcode',
+    'stack-utils', 'type-fest',
+    '@xterm/*',
+    'usehooks-ts',
+    // Other optional runtime deps
+    'https-proxy-agent', 'lru-cache', 'env-paths',
+    'shell-quote', 'indent-string', 'turndown', 'xss',
+    'fflate', 'asciichart', 'bidi-js',
+    'jsonc-parser', 'jsonc-parser/*',
+    'vscode-jsonrpc', 'vscode-jsonrpc/*',
+    '@alcalzone/ansi-tokenize',
   ],
 
   jsx: 'automatic',
@@ -126,13 +163,19 @@ const buildOptions: esbuild.BuildOptions = {
     'MACRO.ISSUES_EXPLAINER': JSON.stringify(
       'report issues at https://github.com/anthropics/claude-code/issues'
     ),
-    'process.env.USER_TYPE': '"external"',
+    'process.env.USER_TYPE': '"ant"',
     'process.env.NODE_ENV': minify ? '"production"' : '"development"',
   },
 
   // Banner: shebang for direct CLI execution
   banner: {
     js: '#!/usr/bin/env node\n',
+  },
+
+  // Load text/markdown files as strings
+  loader: {
+    '.txt': 'text',
+    '.md': 'text',
   },
 
   // Handle the .js → .ts resolution that the codebase uses

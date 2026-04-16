@@ -1,41 +1,132 @@
 // src/shims/bun-bundle.ts
 
-// Map of feature flags to their enabled state.
+// Map of ALL feature flags found in the codebase.
 // In production Bun builds, these are compile-time constants.
-// For our dev build, we read from env vars with sensible defaults.
+// For our dev build, we read from env vars. Default: ALL ON.
+// Set CLAUDE_CODE_<FLAG>=0 to disable individual flags.
 const FEATURE_FLAGS: Record<string, boolean> = {
-  PROACTIVE: envBool('CLAUDE_CODE_PROACTIVE', false),
-  KAIROS: envBool('CLAUDE_CODE_KAIROS', false),
-  KAIROS_BRIEF: envBool('CLAUDE_CODE_KAIROS_BRIEF', false),
-  KAIROS_GITHUB_WEBHOOKS: envBool('CLAUDE_CODE_KAIROS_GITHUB_WEBHOOKS', false),
-  BRIDGE_MODE: envBool('CLAUDE_CODE_BRIDGE_MODE', false),
-  DAEMON: envBool('CLAUDE_CODE_DAEMON', false),
-  VOICE_MODE: envBool('CLAUDE_CODE_VOICE_MODE', false),
-  AGENT_TRIGGERS: envBool('CLAUDE_CODE_AGENT_TRIGGERS', false),
-  MONITOR_TOOL: envBool('CLAUDE_CODE_MONITOR_TOOL', false),
-  COORDINATOR_MODE: envBool('CLAUDE_CODE_COORDINATOR_MODE', false),
-  ABLATION_BASELINE: false, // always off for external builds
-  DUMP_SYSTEM_PROMPT: envBool('CLAUDE_CODE_DUMP_SYSTEM_PROMPT', false),
-  BG_SESSIONS: envBool('CLAUDE_CODE_BG_SESSIONS', false),
-  HISTORY_SNIP: envBool('CLAUDE_CODE_HISTORY_SNIP', false),
-  WORKFLOW_SCRIPTS: envBool('CLAUDE_CODE_WORKFLOW_SCRIPTS', false),
-  CCR_REMOTE_SETUP: envBool('CLAUDE_CODE_CCR_REMOTE_SETUP', false),
-  EXPERIMENTAL_SKILL_SEARCH: envBool('CLAUDE_CODE_EXPERIMENTAL_SKILL_SEARCH', false),
-  ULTRAPLAN: envBool('CLAUDE_CODE_ULTRAPLAN', false),
-  TORCH: envBool('CLAUDE_CODE_TORCH', false),
-  UDS_INBOX: envBool('CLAUDE_CODE_UDS_INBOX', false),
-  FORK_SUBAGENT: envBool('CLAUDE_CODE_FORK_SUBAGENT', false),
-  BUDDY: envBool('CLAUDE_CODE_BUDDY', false),
-  MCP_SKILLS: envBool('CLAUDE_CODE_MCP_SKILLS', false),
-  REACTIVE_COMPACT: envBool('CLAUDE_CODE_REACTIVE_COMPACT', false),
+  // ── Autonomous / Proactive Agents ──
+  PROACTIVE: envBool('CLAUDE_CODE_PROACTIVE', true),
+  KAIROS: envBool('CLAUDE_CODE_KAIROS', true),
+  KAIROS_BRIEF: envBool('CLAUDE_CODE_KAIROS_BRIEF', true),
+  KAIROS_CHANNELS: envBool('CLAUDE_CODE_KAIROS_CHANNELS', true),
+  KAIROS_DREAM: envBool('CLAUDE_CODE_KAIROS_DREAM', true),
+  KAIROS_GITHUB_WEBHOOKS: envBool('CLAUDE_CODE_KAIROS_GITHUB_WEBHOOKS', true),
+  KAIROS_PUSH_NOTIFICATION: envBool('CLAUDE_CODE_KAIROS_PUSH_NOTIFICATION', true),
+  AGENT_TRIGGERS: envBool('CLAUDE_CODE_AGENT_TRIGGERS', true),
+  AGENT_TRIGGERS_REMOTE: envBool('CLAUDE_CODE_AGENT_TRIGGERS_REMOTE', true),
+
+  // ── Multi-Agent / Teams ──
+  COORDINATOR_MODE: envBool('CLAUDE_CODE_COORDINATOR_MODE', true),
+  TEAMMEM: envBool('CLAUDE_CODE_TEAMMEM', true),
+  FORK_SUBAGENT: envBool('CLAUDE_CODE_FORK_SUBAGENT', true),
+  UDS_INBOX: envBool('CLAUDE_CODE_UDS_INBOX', true),
+  BUILTIN_EXPLORE_PLAN_AGENTS: envBool('CLAUDE_CODE_BUILTIN_EXPLORE_PLAN_AGENTS', true),
+
+  // ── Daemon / Background ──
+  DAEMON: envBool('CLAUDE_CODE_DAEMON', true),
+  BG_SESSIONS: envBool('CLAUDE_CODE_BG_SESSIONS', true),
+  SELF_HOSTED_RUNNER: envBool('CLAUDE_CODE_SELF_HOSTED_RUNNER', true),
+  BYOC_ENVIRONMENT_RUNNER: envBool('CLAUDE_CODE_BYOC_ENVIRONMENT_RUNNER', true),
+
+  // ── Bridge / Remote ──
+  BRIDGE_MODE: envBool('CLAUDE_CODE_BRIDGE_MODE', true),
+  CCR_AUTO_CONNECT: envBool('CLAUDE_CODE_CCR_AUTO_CONNECT', true),
+  CCR_MIRROR: envBool('CLAUDE_CODE_CCR_MIRROR', true),
+  CCR_REMOTE_SETUP: envBool('CLAUDE_CODE_CCR_REMOTE_SETUP', true),
+  DIRECT_CONNECT: envBool('CLAUDE_CODE_DIRECT_CONNECT', true),
+  SSH_REMOTE: envBool('CLAUDE_CODE_SSH_REMOTE', true),
+
+  // ── Voice & UI ──
+  VOICE_MODE: envBool('CLAUDE_CODE_VOICE_MODE', true),
+  BUDDY: envBool('CLAUDE_CODE_BUDDY', true),
+  AUTO_THEME: envBool('CLAUDE_CODE_AUTO_THEME', true),
+  TERMINAL_PANEL: envBool('CLAUDE_CODE_TERMINAL_PANEL', true),
+  MESSAGE_ACTIONS: envBool('CLAUDE_CODE_MESSAGE_ACTIONS', true),
+  QUICK_SEARCH: envBool('CLAUDE_CODE_QUICK_SEARCH', true),
+  HISTORY_PICKER: envBool('CLAUDE_CODE_HISTORY_PICKER', true),
+
+  // ── Advanced Reasoning ──
+  ULTRAPLAN: envBool('CLAUDE_CODE_ULTRAPLAN', true),
+  ULTRATHINK: envBool('CLAUDE_CODE_ULTRATHINK', true),
+  VERIFICATION_AGENT: envBool('CLAUDE_CODE_VERIFICATION_AGENT', true),
+  TORCH: envBool('CLAUDE_CODE_TORCH', true),
+  LODESTONE: envBool('CLAUDE_CODE_LODESTONE', true),
+
+  // ── Memory & Context ──
+  EXTRACT_MEMORIES: envBool('CLAUDE_CODE_EXTRACT_MEMORIES', true),
+  AGENT_MEMORY_SNAPSHOT: envBool('CLAUDE_CODE_AGENT_MEMORY_SNAPSHOT', true),
+  AWAY_SUMMARY: envBool('CLAUDE_CODE_AWAY_SUMMARY', true),
+  HISTORY_SNIP: envBool('CLAUDE_CODE_HISTORY_SNIP', true),
+  CONTEXT_COLLAPSE: envBool('CLAUDE_CODE_CONTEXT_COLLAPSE', true),
+  REACTIVE_COMPACT: envBool('CLAUDE_CODE_REACTIVE_COMPACT', true),
+  COMPACTION_REMINDERS: envBool('CLAUDE_CODE_COMPACTION_REMINDERS', true),
+  CACHED_MICROCOMPACT: envBool('CLAUDE_CODE_CACHED_MICROCOMPACT', true),
+
+  // ── Security & Permissions ──
+  BASH_CLASSIFIER: envBool('CLAUDE_CODE_BASH_CLASSIFIER', true),
+  TRANSCRIPT_CLASSIFIER: envBool('CLAUDE_CODE_TRANSCRIPT_CLASSIFIER', true),
+  ANTI_DISTILLATION_CC: envBool('CLAUDE_CODE_ANTI_DISTILLATION_CC', true),
+  NATIVE_CLIENT_ATTESTATION: envBool('CLAUDE_CODE_NATIVE_CLIENT_ATTESTATION', true),
+
+  // ── Code Intelligence ──
+  TREE_SITTER_BASH: envBool('CLAUDE_CODE_TREE_SITTER_BASH', true),
+  TREE_SITTER_BASH_SHADOW: envBool('CLAUDE_CODE_TREE_SITTER_BASH_SHADOW', true),
+
+  // ── Tools & Skills ──
+  MONITOR_TOOL: envBool('CLAUDE_CODE_MONITOR_TOOL', true),
+  MCP_SKILLS: envBool('CLAUDE_CODE_MCP_SKILLS', true),
+  MCP_RICH_OUTPUT: envBool('CLAUDE_CODE_MCP_RICH_OUTPUT', true),
+  WORKFLOW_SCRIPTS: envBool('CLAUDE_CODE_WORKFLOW_SCRIPTS', true),
+  EXPERIMENTAL_SKILL_SEARCH: envBool('CLAUDE_CODE_EXPERIMENTAL_SKILL_SEARCH', true),
+  SKILL_IMPROVEMENT: envBool('CLAUDE_CODE_SKILL_IMPROVEMENT', true),
+  RUN_SKILL_GENERATOR: envBool('CLAUDE_CODE_RUN_SKILL_GENERATOR', true),
+  WEB_BROWSER_TOOL: envBool('CLAUDE_CODE_WEB_BROWSER_TOOL', true),
+  CHICAGO_MCP: envBool('CLAUDE_CODE_CHICAGO_MCP', true),
+
+  // ── Build / Settings / Misc ──
+  DOWNLOAD_USER_SETTINGS: envBool('CLAUDE_CODE_DOWNLOAD_USER_SETTINGS', true),
+  UPLOAD_USER_SETTINGS: envBool('CLAUDE_CODE_UPLOAD_USER_SETTINGS', true),
+  DUMP_SYSTEM_PROMPT: envBool('CLAUDE_CODE_DUMP_SYSTEM_PROMPT', true),
+  STREAMLINED_OUTPUT: envBool('CLAUDE_CODE_STREAMLINED_OUTPUT', true),
+  FILE_PERSISTENCE: envBool('CLAUDE_CODE_FILE_PERSISTENCE', true),
+  COMMIT_ATTRIBUTION: envBool('CLAUDE_CODE_COMMIT_ATTRIBUTION', true),
+  CONNECTOR_TEXT: envBool('CLAUDE_CODE_CONNECTOR_TEXT', true),
+  HOOK_PROMPTS: envBool('CLAUDE_CODE_HOOK_PROMPTS', true),
+  TEMPLATES: envBool('CLAUDE_CODE_TEMPLATES', true),
+  TOKEN_BUDGET: envBool('CLAUDE_CODE_TOKEN_BUDGET', true),
+  NEW_INIT: envBool('CLAUDE_CODE_NEW_INIT', true),
+  REVIEW_ARTIFACT: envBool('CLAUDE_CODE_REVIEW_ARTIFACT', true),
+  BUILDING_CLAUDE_APPS: envBool('CLAUDE_CODE_BUILDING_CLAUDE_APPS', true),
+  SHOT_STATS: envBool('CLAUDE_CODE_SHOT_STATS', true),
+  UNATTENDED_RETRY: envBool('CLAUDE_CODE_UNATTENDED_RETRY', true),
+  POWERSHELL_AUTO_MODE: envBool('CLAUDE_CODE_POWERSHELL_AUTO_MODE', true),
+  PROMPT_CACHE_BREAK_DETECTION: envBool('CLAUDE_CODE_PROMPT_CACHE_BREAK_DETECTION', true),
+  BREAK_CACHE_COMMAND: envBool('CLAUDE_CODE_BREAK_CACHE_COMMAND', true),
+  PERFETTO_TRACING: envBool('CLAUDE_CODE_PERFETTO_TRACING', true),
+  ENHANCED_TELEMETRY_BETA: envBool('CLAUDE_CODE_ENHANCED_TELEMETRY_BETA', true),
+  SLOW_OPERATION_LOGGING: envBool('CLAUDE_CODE_SLOW_OPERATION_LOGGING', true),
+  COWORKER_TYPE_TELEMETRY: envBool('CLAUDE_CODE_COWORKER_TYPE_TELEMETRY', true),
+  MEMORY_SHAPE_TELEMETRY: envBool('CLAUDE_CODE_MEMORY_SHAPE_TELEMETRY', true),
+  ALLOW_TEST_VERSIONS: envBool('CLAUDE_CODE_ALLOW_TEST_VERSIONS', true),
+  HARD_FAIL: envBool('CLAUDE_CODE_HARD_FAIL', false), // keep off — crashes on errors
+  OVERFLOW_TEST_TOOL: envBool('CLAUDE_CODE_OVERFLOW_TEST_TOOL', false), // test-only
+
+  // ── Platform Detection ──
+  IS_LIBC_GLIBC: envBool('CLAUDE_CODE_IS_LIBC_GLIBC', true),
+  IS_LIBC_MUSL: envBool('CLAUDE_CODE_IS_LIBC_MUSL', false),
+
+  // ── Ablation (keep off) ──
+  ABLATION_BASELINE: false,
 }
 
 function envBool(key: string, fallback: boolean): boolean {
   const v = process.env[key]
   if (v === undefined) return fallback
-  return v === '1' || v === 'true'
+  return v === '1' || v === 'true' || v === 'yes'
 }
 
 export function feature(name: string): boolean {
-  return FEATURE_FLAGS[name] ?? false
+  // Default to TRUE for unknown flags (enables any new flags not yet listed)
+  return FEATURE_FLAGS[name] ?? envBool(`CLAUDE_CODE_${name}`, true)
 }
