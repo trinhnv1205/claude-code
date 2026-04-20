@@ -1758,3 +1758,7 @@ export function setPromptId(id: string | null): void {
 
 
 
+
+// Stub: added for build compatibility
+export function isReplBridgeActive(): boolean { return false }
+
