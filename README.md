@@ -17,6 +17,24 @@
 </div>
 
 ---
+<div align="center">
+<table>
+<tr>
+  
+`Spend less time reading code, more time building.`
+  
+<td width="120" align="center">
+<img src="https://repoxray.devdisplay.org/logo.png" width="80" height="80" alt="RepoXray Logo"/>
+</td>
+<td>
+<h2 align="center">Understand Any Codebase<br>X-Ray Any Repo, in Seconds.<br>
+<a href="https://repoxray.devdisplay.org/"><strong>repoxray.devdisplay.org</strong></a></h2>
+</td>
+</tr>
+</table>
+</div>
+
+---
 
 ## Table of Contents
 
@@ -444,5 +462,16 @@ Contributions to documentation, the MCP server, and exploration tooling are welc
 ## Disclaimer
 
 This repository archives source code leaked from Anthropic's npm registry on **2026-03-31**. All original source code is the property of [Anthropic](https://www.anthropic.com). This is not an official release and is not licensed for redistribution. Contact [aashuu ✦](https://x.com/warrioraashuu) for any comments.
+
+---
+
+<a href="https://www.star-history.com/?repos=codeaashu%2Fclaude-code&type=date&legend=bottom-right">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/image?repos=codeaashu/claude-code&type=date&theme=dark&legend=bottom-right" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/image?repos=codeaashu/claude-code&type=date&legend=bottom-right" />
+   <img alt="Star History Chart" src="https://api.star-history.com/image?repos=codeaashu/claude-code&type=date&legend=bottom-right" />
+ </picture>
+</a>
+
 
 
